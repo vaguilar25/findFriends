@@ -27,19 +27,26 @@ module.exports = function (app) {
 
   app.post("/api/friends", function (req, res) {
 
-   
-    console.log(req.body.name);
+  
 
-
-    
     var bestMatch = [];
     for (var i = 0; i < friendsData.length; i++) {
       var scoreFriends = friendsData[i].scores;
-     
+   
       var dif = 0;
       if (req.body.name != friendsData[i].name) {
         for (var j = 0; j < friendsData[i].scores.length; j++) {
-          dif += Math.abs(req.body.scores[j] - friendsData[i].scores[j]);
+      
+          if (req.body.scores[j] === "5 (Strongly Agree)") {
+           
+            req.body.scores[j]="5";
+          }
+          if (req.body.scores[j] === "1 (Strongly Disagree)") {
+            req.body.scores[j]="1";
+          }
+            
+            dif += Math.abs(req.body.scores[j] - friendsData[i].scores[j]);
+           
         }
       }
       if (bestMatch = []) {
@@ -49,18 +56,16 @@ module.exports = function (app) {
         bestMatch = [friendsData[i].name, friendsData[i].photo, dif]
       }
 
-    
+
     }
-    console.log(bestMatch);
-    console.log("the best match is: ", bestMatch[0])
+  
     friendsData.push(req.body);
 
     //here return data for the modal
-   res.json(bestMatch);
+    res.json(bestMatch);
 
 
-
-});
+  });
 
 }
 

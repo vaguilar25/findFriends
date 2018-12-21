@@ -21,7 +21,7 @@
       <h1 class="text-left">
         <span class="fa fa-facebook-square"></span> Survey Questions</h1>
       <hr>
-    
+
 
     </div>
     <div class="row">
@@ -35,11 +35,20 @@
             <form role="form">
               <div class="form-group">
                 <label for="name">Name (Required)</label>
-                <input type="text" class="form-control" id="name" placeholder="name">
+                <input type="text" class="form-control " id="name" placeholder="name" required>
+                <div class="invalid-feedback">
+                  This is required!
+                </div>
               </div>
+
+
+
               <div class="form-group">
                 <label for="photo">Link to Photo Image (Required)</label>
                 <input type="text" class="form-control" id="photo" placeholder="link">
+                <div class="invalid-feedback">
+                  This is required!
+                </div>
               </div>
 
               <hr>
@@ -54,6 +63,9 @@
                   <option>4</option>
                   <option>5 (Strongly Agree)</option>
                 </select>
+                <div class="invalid-feedback">
+                  This is required!
+                </div>
 
                 <label for="q2">Question 2 - Generally speaking, you rely more on your experience than your
                   imagination.
@@ -65,6 +77,9 @@
                   <option>4</option>
                   <option>5 (Strongly Agree)</option>
                 </select>
+                <div class="invalid-feedback">
+                  This is required!
+                </div>
 
                 <label for="q3">Question 3 - You find it easy to stay relaxed and focused even when there is some
                   pressure.
@@ -146,7 +161,7 @@
               <br>
               <br>
 
-              <button type="submit" class="btn btn-primary submit" data-toggle="modal" data-target="#exampleModal">Submit</button>
+              <button type="submit" class="btn btn-primary submit" data-target="#exampleModal">Submit</button>
             </form>
 
 
@@ -162,7 +177,7 @@
                     </button>
                   </div>
                   <div class="modal-body" id="body">
-                   
+
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" class="closeModal">Close</button>
@@ -200,68 +215,92 @@
   // Our api recognizes the route (/api/friends)... and then runs the associated code (found in api-routes.js).
   // In this case the associated code "saves" the data to the friengs.js file 
   $(".closeModal").on("click", function (event) {
-    
+
   });
 
   $(".submit").on("click", function (event) {
     event.preventDefault();
 
-    // Here we grab the form elements
-    var newAnswer = {
-      name: $("#name").val().trim(),
-      photo: $("#photo").val().trim(),
-      scores: [
-        $("#q1").val(),
-        $("#q2").val(),
-        $("#q3").val(),
-        $("#q4").val(),
-        $("#q5").val(),
-        $("#q6").val(),
-        $("#q7").val(),
-        $("#q8").val(),
-        $("#q9").val(),
-        $("#q10").val()
+
+    // Form validation
+    function validateField() {
+      var isValid = true;
+    
+      var count = 0;
+      $(".form-control").each(function () {
+     
+        if ($(this).val() === "") {
+   
+          $(this).addClass("is-invalid")
+          isValid = false;
+        }
+        count++
+      });
+
+      return isValid;
+    }
+
+  
+
+    
+    if (validateField()) {
+
+      // Here we grab the form elements
+      $("#name").removeClass("is-invalid");
+      $("#photo").removeClass("is-invalid");
+      var newAnswer = {
+        name: $("#name").val().trim(),
+        photo: $("#photo").val().trim(),
+        scores: [
+          $("#q1").val(),
+          $("#q2").val(),
+          $("#q3").val(),
+          $("#q4").val(),
+          $("#q5").val(),
+          $("#q6").val(),
+          $("#q7").val(),
+          $("#q8").val(),
+          $("#q9").val(),
+          $("#q10").val()
 
 
-      ]
+        ]
 
 
-    };
-
-    console.log("New Answer" + newAnswer);
-    $("#name").empty();
-        $("#link").empty();
-
-    // This line is the magic. It"s very similar to the standard ajax function we used.
-    // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
-    // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
+      };
 
 
-    $.post("/api/friends", newAnswer, function (data) {
 
-      //$("#title").text(data)
+      // This line is the magic. It"s very similar to the standard ajax function we used.
+      // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
+      // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
 
-      if (data) {
-        $("#title").text(data[0]);
 
-       // $("#body").text("<img src=" + data[1] + " width='250'>");
-        var image = "<img src=" + data[1] + " width='250'>"
-        //console.log("image" + imageMatch)
-        //var nameMatch = '<h2 class="name">' + data[0] + '</h2>'
+      $.post("/api/friends", newAnswer, function (data) {
 
-        $("#body").empty();
-        $("#body").append(image);
-        //$("#modalMatch").modal();
+  
 
-        $("#name").val("");
+        if (data) {
+          $("#title").text(data[0]);
 
-    $("#photo").val("");
         
-      }
+          var image = "<img src=" + data[1] + " width='250'>"
+         
+          $("#body").empty();
+          $("#body").append(image);
+       
+          $("#exampleModal").modal();
+
+          $("#name").val("");
+
+          $("#photo").val("");
+      
+
+        }
 
       });
 
-
+    }
 
   });
 
